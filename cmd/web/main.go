@@ -24,8 +24,7 @@ type application struct {
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
-	// Define a new command-line flag for the session secret (a random key which
+	dsn := flag.String("dns", "postgres://postgres:123@localhost:5432/snippetbox", "Postgre data source name") // Define a new command-line flag for the session secret (a random key which
 	// will be used to encrypt and authenticate session cookies). It should be 32
 	// will be used to encrypt and authenticate session cookies). It should be 32
 	// bytes long.
