@@ -10,9 +10,6 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	// Because Pat matches the "/" path exactly, we can now remove the manual check
-	// Because Pat matches the "/" path exactly, we can now remove the manual check
-	// of r.URL.Path != "/" from this handler.
 	s, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, err)
@@ -22,6 +19,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		Snippets: s,
 	})
 }
+
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
@@ -42,12 +40,12 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// Add a new createSnippetForm handler, which for now returns a placeholder response.
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "create.page.tmpl", &templateData{
 		Form: forms.New(nil),
 	})
 }
+
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -67,11 +65,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	// Use the Put() method to add a string value ("Your snippet was saved
-	// successfully!") and the corresponding key ("flash") to the session
-	// data. Note that if there's no existing session for the current user
-	// (or their session has expired) then a new, empty, session for them
-	// will automatically be created by the session middleware.
+
 	app.session.Put(r, "flash", "Snippet successfully created!")
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }

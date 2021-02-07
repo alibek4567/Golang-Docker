@@ -3,22 +3,15 @@ package postgres
 import (
 	"context"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"se02.com/pkg/models"
 	"strconv"
 	"time"
-
-	// Import the models package that we just created. You need to prefix this with
-	// whatever module path you set up back in chapter 02.02 (Project Setup and Enabling
-	// Modules) so that the import statement looks like this:
-	// "{your-module-path}/pkg/models".
-	"se02.com/pkg/models"
 )
 
-// Define a SnippetModel type which wraps a sql.DB connection pool.
 type SnippetModel struct {
 	DB *pgxpool.Pool
 }
 
-// This will insert a new snippet into the database.
 func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 
 	stmt := "INSERT INTO snippets (title, content, created, expires) VALUES ($1, $2, $3, $4) RETURNING id"
@@ -37,7 +30,6 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 
 }
 
-// This will return a specific snippet based on its id.
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 
 	stmt := `SELECT id, title, content, created, expires FROM snippets
@@ -60,7 +52,6 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 
 }
 
-// This will return the 10 most recently created snippets.
 func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	stmt := "SELECT id, title, content, created, expires FROM snippets WHERE expires > $1 ORDER BY created DESC LIMIT 10"
 

@@ -24,10 +24,7 @@ type application struct {
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dns", "postgres://postgres:123@localhost:5432/snippetbox", "Postgre data source name") // Define a new command-line flag for the session secret (a random key which
-	// will be used to encrypt and authenticate session cookies). It should be 32
-	// will be used to encrypt and authenticate session cookies). It should be 32
-	// bytes long.
+	dsn := flag.String("dns", "postgres://postgres:123@postgresdb:5432/snippetbox", "Postgres data source name")
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key")
 	flag.Parse()
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -37,16 +34,13 @@ func main() {
 		errorLog.Fatal(err)
 	}
 	defer db.Close()
-	templateCache, err := newTemplateCache("./ui/html/")
+	templateCache, err := newTemplateCache("/app/ui/html/")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
-	// Use the sessions.New() function to initialize a new session manager,
-	// passing in the secret key as the parameter. Then we configure it so
-	// sessions always expires after 12 hours.
+
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
-	// And add the session manager to our application dependencies.
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
